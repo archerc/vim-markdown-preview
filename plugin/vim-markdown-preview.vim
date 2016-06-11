@@ -21,6 +21,14 @@ if !exists("g:vim_markdown_preview_github")
   let g:vim_markdown_preview_github = 0
 endif
 
+if !exists("g:vim_markdown_preview_pandoc")
+    let g:vim_markdown_preview_pandoc = 1
+endif
+
+if !exists("g:vim_markdown_pandoc_options")
+    let g:vim_markdown_pandoc_options = '-s --mathjax'
+endif
+
 if !exists("g:vim_markdown_preview_use_xdg_open")
     let g:vim_markdown_preview_use_xdg_open = 0
 endif
@@ -53,7 +61,11 @@ function! Vim_Markdown_Preview()
   if g:vim_markdown_preview_github == 1
     call system('grip "' . b:curr_file . '" --export /tmp/vim-markdown-preview.html --title vim-markdown-preview.html')
   else
-    call system('markdown "' . b:curr_file . '" > /tmp/vim-markdown-preview.html')
+      if g:vim_markdown_preview_pandoc == 1
+	  call system('pandoc "' . b:curr_file . '" -o /tmp/vim-markdown-preview.html ' . g:vim_markdown_pandoc_options)
+      else
+	  call system('markdown "' . b:curr_file . '" > /tmp/vim-markdown-preview.html')
+      endif
   endif
 
   if g:vmp_osname == 'unix'
